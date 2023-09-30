@@ -78,5 +78,5 @@ for epoch in range(num_epochs):
         if (batch_idx + 1) % 10 == 0:
             print('Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}'.format(epoch+1, num_epochs, batch_idx+1, len(data_loader), loss.item()))
 
-torch.save(model.state_dict(), 'trained_model.pth')
+torch.save(model.state_dict(), 'model.pth')
 
