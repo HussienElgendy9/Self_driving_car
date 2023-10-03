@@ -1,9 +1,11 @@
 import torch
 import torch.nn as nn
+from torchvision import transforms
 
 class CNNs(nn.Module):
     def __init__(self):
         super(CNNs, self).__init__()
+        self.resize = transforms.Resize((224, 224), antialias=True)
         self.conv1 = nn.Conv2d(in_channels=3, out_channels=32, kernel_size=4, stride=1, padding=1)
         self.relu1 = nn.ReLU()
         self.maxpool1 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
@@ -16,10 +18,9 @@ class CNNs(nn.Module):
         self.relu3 = nn.ReLU()
         self.maxpool3 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
 
-        
-        num_features = 16 * 26 * 26  
-
-        num_features += 1  
+        new_height = 26 
+        new_width = 26   
+        num_features = 16 * new_height * new_width 
 
         self.fc1 = nn.Linear(in_features=num_features, out_features=128)
         self.relu4 = nn.ReLU()
@@ -31,18 +32,19 @@ class CNNs(nn.Module):
 
         self.fc_output = nn.Linear(in_features=64, out_features=2)
 
-    def forward(self, X, speed):
+    def forward(self, X):
+        X = X.reshape((-1, 3, 160, 320))
+        X = self.resize(X)
         X = self.maxpool1(self.relu1(self.conv1(X)))
         X = self.maxpool2(self.relu2(self.conv2(X)))
         X = self.maxpool3(self.relu3(self.conv3(X)))
-        
-        X = X.view(X.size(0), -1) 
-        speed = speed.view(-1, 1)
-        X = torch.cat((X, speed), dim=1) 
-        
+
+        #print(X.shape)
+
+        X = X.view(X.size(0), -1)
+        #print(X.shape)
         X = self.dropout1(self.relu4(self.fc1(X)))
         X = self.dropout2(self.relu5(self.fc2(X)))
-        
         X = self.fc_output(X).view(-1, 2)
-        
+
         return X
