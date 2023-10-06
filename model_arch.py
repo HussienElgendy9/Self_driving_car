@@ -18,9 +18,10 @@ class CNNs(nn.Module):
         self.relu3 = nn.ReLU()
         self.maxpool3 = nn.MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)
 
-        new_height = 26 
-        new_width = 26   
-        num_features = 16 * new_height * new_width 
+       
+        height = 26 
+        width = 26  
+        num_features = 16 * height * width 
 
         self.fc1 = nn.Linear(in_features=num_features, out_features=128)
         self.relu4 = nn.ReLU()
